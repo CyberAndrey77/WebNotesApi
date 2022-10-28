@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  webapinotes:
+    image: webapinotes
+    depends_on:
+      - "postgers"
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5000:80"
+      # - "9090:80"
+    environment:
+      DB_CONNECTION_STRING: "Host=postgers;Port=5432;Database=Notes;Username=postgres;Password=159753"
+
+
+  postgers:
+    image: postgres
+    ports:
+      - "5432:5432"
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "159753"
+      POSTGRES_DB: "Notes"

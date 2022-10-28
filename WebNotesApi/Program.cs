@@ -57,7 +57,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+string connection = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");// ?? "Host=postgers;Port=5432;Database=Notes;Username=postgres;Password=159753";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
 
 var app = builder.Build();

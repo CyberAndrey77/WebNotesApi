@@ -19,7 +19,7 @@ namespace WebNotesApi.Controllers
             _logger = logger;
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

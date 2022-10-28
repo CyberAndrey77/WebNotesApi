@@ -33,7 +33,7 @@ namespace WebNotesApi.Controllers
                 return NotFound();
             }
 
-            User? user = FindUser().Result;
+            User? user = await FindUser();
 
             if (user == null)
             {
