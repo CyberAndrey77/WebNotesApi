@@ -46,9 +46,8 @@ namespace WebNotesApi.Models
         public NoteCategory Category { get; set; }
 
         /// <summary>
-        /// Ссылка на пользователей
+        /// id пользователя
         /// </summary>
-        [JsonIgnore]
-        public List<User> Users { get; set; } = new List<User>();
+        public int UserId { get; set; }
     }
 }

@@ -33,15 +33,13 @@ namespace WebNotesApi.Controllers
                 return NotFound();
             }
 
-            User? user = await FindUser();
+            int userId = await FindUser();
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
+            
 
-            var notes = _context.Users.Include(u => u.Notes).ToListAsync().Result.Find(x => x.Id == user.Id);
-            return notes.Notes;
+            //var notes = _context.NoteUsers.Include(u => u.Notes).ToListAsync().Result.Find(x => x.Id == noteUser.Id);
+            var notes = await _context.Notes.Where(x => x.UserId == userId).ToListAsync();
+            return notes;
         }
 
         // GET: api/Notes/5
@@ -53,14 +51,10 @@ namespace WebNotesApi.Controllers
                 return NotFound();
             }
 
-            User? user = FindUser().Result;
+            int userId = await FindUser();
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
-            var note = await _context.Notes.Include(u => u.Users).FirstOrDefaultAsync(n => n.Id == id);
+            //var note = await _context.Notes.Include(u => u.Users).FirstOrDefaultAsync(n => n.Id == id);
+            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
             if (note == null)
             {
                 return NotFound();
@@ -74,14 +68,9 @@ namespace WebNotesApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutNote(int id, NoteModel model)
         {
-            User? user = FindUser().Result;
+            int userId = await FindUser();
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
-            var note = await _context.Notes.Include(u => u.Users).FirstOrDefaultAsync(n => n.Id == id);
+            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
             if (note == null)
             {
                 return NotFound();
@@ -123,37 +112,39 @@ namespace WebNotesApi.Controllers
                 return Problem("Entity set 'ApplicationContext.Notes'  is null.");
             }
 
-            User? user = FindUser().Result;
+            int userId = await FindUser();
 
-            if (user == null)
-            {
-                return BadRequest();
-            }
+            
+            
 
-            var note = new Note()
+            var note = new Note
             {
                 NoteName = model.NoteName,
                 Text = model.Text,
                 CategoryId = model.CategoryId,
                 CreatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
-                UpdatedDate = DateTime.Now.ToString("dd.MM.yyyy")
+                UpdatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
+                UserId = userId
             };
-
-            note.Users.Add(user);
-
             _context.Notes.Add(note);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetNote", new { id = note.Id }, note);
         }
 
-        private async Task<User?> FindUser()
+        private Task<int> FindUser()
         {
             int.TryParse(User.Identities.First().Claims.First().Value, out int id);
 
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
-            return user;
+            
+            return Task.FromResult(id);
         }
+
+        //private async Task<NoteUser?> FindNoteUser(int userId)
+        //{
+        //    return await _context.NoteUsers.FirstOrDefaultAsync(u => u.UserId == userId);
+        //}
 
         // DELETE: api/Notes/5
         [HttpDelete("{id}")]
@@ -163,15 +154,9 @@ namespace WebNotesApi.Controllers
             {
                 return NotFound();
             }
+            int userId = await FindUser();
 
-            User? user = FindUser().Result;
-
-            if (user == null)
-            {
-                return BadRequest();
-            }
-
-            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == id);
+            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
             if (note == null)
             {
                 return NotFound();
