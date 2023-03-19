@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebNotesApi.Models
+namespace WebNotesApi.Models.NoteModels
 {
     /// <summary>
     /// Категоря заметок.

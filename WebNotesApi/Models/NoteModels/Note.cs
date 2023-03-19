@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 
-namespace WebNotesApi.Models
+namespace WebNotesApi.Models.NoteModels
 {
     /// <summary>
     /// Класс заметка.

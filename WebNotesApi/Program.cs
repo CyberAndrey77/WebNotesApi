@@ -7,6 +7,7 @@ using System.Text;
 using WebNotesApi.Services;
 using System.Text.Json.Serialization;
 using WebNotesApi.Models;
+using WebNotesApi.Services.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,9 +51,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
-string connection = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");// ?? 
+string connection = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? "Host=localhost;Port=5432;Database=Notes;Username=postgres;Password=159753";
 //string connection = "Host=localhost;Port=5432;Database=Notes;Username=postgres;Password=159753";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IVerifyService, VerifyService>();
+builder.Services.AddTransient<IAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();
+builder.Services.AddScoped<IRefreshTokenService, RefreshTokenService>();
+builder.Services.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
+
+//builder.Services.AddHostedService<ReceiverMessageService>();
 
 var app = builder.Build();
 

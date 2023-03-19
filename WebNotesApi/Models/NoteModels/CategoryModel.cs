@@ -1,4 +1,4 @@
-﻿namespace WebNotesApi.Models
+﻿namespace WebNotesApi.Models.NoteModels
 {
     public class CategoryModel
     {

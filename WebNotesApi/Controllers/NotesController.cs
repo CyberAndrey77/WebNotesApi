@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using WebNotesApi.Models;
+using WebNotesApi.Models.NoteModels;
 using WebNotesApi.Services;
 
 namespace WebNotesApi.Controllers
