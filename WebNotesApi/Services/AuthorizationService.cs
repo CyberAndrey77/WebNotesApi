@@ -62,7 +62,7 @@ namespace WebNotesApi.Services
                 throw new ArgumentException("Токен не верный");
             }
 
-            var user = await _context.Users.FindAsync(token.UserId);
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == token.UserId);
 
             if (user == null)
             {
@@ -78,15 +78,15 @@ namespace WebNotesApi.Services
             return new List<string>() { _accessTokenService.GenerateToken(user), refreshToken };
         }
 
-        public async Task<string> Registration(RegistrationModel model)
+        public async Task<AnswerModel> Registration(RegistrationModel model)
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == model.Email);
             if (user != null)
             {
-                return "Данная эл. почта уже используется";
+                return new AnswerModel() { MessageError = "Данная эл. почта уже используется" };
             }
 
-            string verificationToken = CreateRandomToken();
+            string verificationToken = RandomToken.GetRandomToken();
 
             user = new User()
             {
@@ -104,34 +104,13 @@ namespace WebNotesApi.Services
 
             await _emailService.SendVerificationOnEmailAsync(user.Email, user.VerificationToken);
 
-            return "Успешная регистрация";
+            return new AnswerModel() { MessageError = "Успешная регистрация" };
         }
-        public async Task<string> CreateVerificationPasswordToken(string email)
-        {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
-            if (user == null)
-            {
-                return "Пользователь не найден";
-            }
-
-            user.PasswordVerificationToken = CreateRandomToken();
-            user.DateExpirationPasswordVerificationToken = DateTime.Now.AddDays(1).ToString();
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return "Пройдите по ссылке присланой на электронную почту";
-        }
-
-
 
         private async Task PutRefreshTokenInDB(int id, string refreshToken)
         {
             await _context.RefreshTokens.AddAsync(new RefreshToken() { UserId = id, Token = refreshToken });
             await _context.SaveChangesAsync();
-        }
-
-        private string CreateRandomToken()
-        {
-            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
         }
     }
 }

@@ -10,18 +10,13 @@ namespace WebNotesApi.Controllers
     public class AuthorizeController : ControllerBase
     {
         private readonly IAuthorizationService _authorization;
-        private readonly IVerifyService _verifyService;
-        private readonly IPasswordService _passwordService;
-        public AuthorizeController(IAuthorizationService authorization,
-            IVerifyService verifyService, IPasswordService passwordService)
+        public AuthorizeController(IAuthorizationService authorization)
         {
             _authorization = authorization;
-            _verifyService = verifyService;
-            _passwordService = passwordService;
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<DataTokens>> Login(LoginModel model)
+        public async Task<IActionResult> Login(LoginModel model)
         {
             try
             {
@@ -49,47 +44,8 @@ namespace WebNotesApi.Controllers
             }
         }
 
-        [HttpGet("verify")]
-        public async Task<IActionResult> Verify(string token)
-        {
-            try
-            {
-                return Ok(await _verifyService.VerifyEmail(token));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword(ResetPasswordModel resetPasswordModel)
-        {
-            try
-            {
-                return Ok(await _passwordService.ResetPasswordAsync(resetPasswordModel));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword(string email)
-        {
-            try
-            {
-                return Ok(await _authorization.CreateVerificationPasswordToken(email));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
         [HttpPost("refresh")]
-        public async Task<ActionResult<DataTokens>> RefreshToken(RefreshTokenModel model)
+        public async Task<IActionResult> RefreshToken(RefreshTokenModel model)
         {
             try
             {

@@ -8,9 +8,12 @@ namespace WebNotesApi.Services
     public class PasswordService : IPasswordService
     {
         private readonly ApplicationContext _context;
-        public PasswordService(ApplicationContext context)
+        private readonly IEmailService _emailService;
+
+        public PasswordService(ApplicationContext context, IEmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
         public byte[] CreatePasswordHash(string password)
         {
@@ -22,6 +25,26 @@ namespace WebNotesApi.Services
             return passwordHash;
         }
 
+        public async Task<AnswerModel> CreateVerificationPasswordToken(string email)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user == null)
+            {
+                return new AnswerModel() { MessageError = "Пользователь не найден" };
+            }
+            if (!user.IsVerification)
+            {
+                return new AnswerModel() { MessageError = "Почта не подверждена" };
+            }
+
+            user.PasswordVerificationToken = RandomToken.GetRandomToken();
+            user.DateExpirationPasswordVerificationToken = DateTime.Now.AddDays(1).ToString();
+            _context.Entry(user).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            await _emailService.SendLinkForResetPasswordOnEmailAsync(user.Email, user.PasswordVerificationToken);
+            return new AnswerModel() { Message = "Пройдите по ссылке присланой на электронную почту" };
+        }
+
         public async Task<string> ResetPasswordAsync(ResetPasswordModel resetPasswordModel)
         {
             if (resetPasswordModel.Password != resetPasswordModel.RepetedPassword)
@@ -29,7 +52,7 @@ namespace WebNotesApi.Services
                 return "Пароли не совпадают";
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.VerificationToken == resetPasswordModel.Token);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.PasswordVerificationToken == resetPasswordModel.Token);
             if (user == null)
             {
                 return "Неверный токен";

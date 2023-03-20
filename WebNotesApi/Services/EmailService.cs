@@ -12,15 +12,18 @@ namespace WebNotesApi.Services
             _context = context;
         }
 
-        public Task<string> SendLinkForResetPasswordOnEmailAsync(string email, string token)
+        public async Task<string> SendLinkForResetPasswordOnEmailAsync(string email, string token)
         {
-            throw new NotImplementedException();
+            var url = $"https://localhost:7288/api/Password/reset_password?token={token}";
+            var text = $"<span>Для сброса пароля перейдите по <a href=\"{url}\">ссылке</a></span>";
+            await SendMail(email, "Сброс пароля", text);
+            return "Сообщение оптравлено на почту";
         }
 
         public async Task<string> SendVerificationOnEmailAsync(string email, string token)
         {
-            var url = $"https://localhost:7288/api/Authorize/verify?token={token}";
-            var text = $"<span>Для подверждения регистрации перейтите по <a href=\"{url}\">ссылке</a></span>";
+            var url = $"https://localhost:7288/api/Email/verify?token={token}";
+            var text = $"<span>Для подверждения регистрации перейдите по <a href=\"{url}\">ссылке</a></span>";
             await SendMail(email, "Подверждение почты", text);
             return "Сообщение оптравлено на почту";
         }

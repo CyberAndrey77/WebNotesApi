@@ -56,7 +56,7 @@ string connection = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IPasswordService, PasswordService>();
-builder.Services.AddScoped<IVerifyService, VerifyService>();
+builder.Services.AddScoped<IVerifyEmailService, VerifyEmailService>();
 builder.Services.AddTransient<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
 builder.Services.AddScoped<IAccessTokenService, AccessTokenService>();

@@ -7,5 +7,6 @@ namespace WebNotesApi.Services.Interface
         byte[] CreatePasswordHash(string password);
         bool VerifyPassword(string enteredPassword, byte[] password);
         Task<string> ResetPasswordAsync(ResetPasswordModel resetPasswordModel);
+        Task<AnswerModel> CreateVerificationPasswordToken(string email);
     }
 }
