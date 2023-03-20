@@ -12,15 +12,12 @@ namespace WebNotesApi.Controllers
         private readonly IAuthorizationService _authorization;
         private readonly IVerifyService _verifyService;
         private readonly IPasswordService _passwordService;
-        private readonly ISendMessageService _sendMessageService;
         public AuthorizeController(IAuthorizationService authorization,
-            IVerifyService verifyService, IPasswordService passwordService,
-            ISendMessageService sendMessageService)
+            IVerifyService verifyService, IPasswordService passwordService)
         {
             _authorization = authorization;
             _verifyService = verifyService;
             _passwordService = passwordService;
-            _sendMessageService = sendMessageService;
         }
 
         [HttpPost("login")]
