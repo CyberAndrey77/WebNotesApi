@@ -35,10 +35,11 @@ namespace WebNotesApi.Controllers
 
             int userId = await FindUser();
 
-            
 
-            //var notes = _context.NoteUsers.Include(u => u.Notes).ToListAsync().Result.Find(x => x.Id == noteUser.Id);
-            var notes = await _context.Notes.Where(x => x.UserId == userId).ToListAsync();
+
+            var notes = await _context.Notes.Include(note => note.Users.Where(user => user.Id == userId))
+                .AsNoTracking().ToListAsync();
+            //var notes = await _context.Notes.Where(x => x.UserId == userId).ToListAsync();
             return notes;
         }
 
@@ -53,8 +54,8 @@ namespace WebNotesApi.Controllers
 
             int userId = await FindUser();
 
-            //var note = await _context.Notes.Include(u => u.Users).FirstOrDefaultAsync(n => n.Id == id);
-            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
+            var note = await _context.Notes.Include(u => u.Users).AsNoTracking().FirstOrDefaultAsync(n => n.Id == id);
+            //var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
             if (note == null)
             {
                 return NotFound();
@@ -66,7 +67,7 @@ namespace WebNotesApi.Controllers
         //// PUT: api/Notes/5
         //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutNote(int id, NoteModel model)
+        public async Task<IActionResult> UpdateNote(int id, NoteModel model)
         {
             int userId = await FindUser();
 
@@ -105,7 +106,7 @@ namespace WebNotesApi.Controllers
         // POST: api/Notes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Note>> PostNote(NoteModel model)
+        public async Task<ActionResult<Note>> CreateNote(NoteModel model)
         {
             if (_context.Notes == null)
             {
@@ -114,7 +115,7 @@ namespace WebNotesApi.Controllers
 
             int userId = await FindUser();
 
-            
+            var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == userId);
             
 
             var note = new Note
@@ -124,8 +125,9 @@ namespace WebNotesApi.Controllers
                 CategoryId = model.CategoryId,
                 CreatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
                 UpdatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
-                UserId = userId
             };
+            note.Users.Add(user);
+            user.Notes.Add(note);
             _context.Notes.Add(note);
 
             await _context.SaveChangesAsync();

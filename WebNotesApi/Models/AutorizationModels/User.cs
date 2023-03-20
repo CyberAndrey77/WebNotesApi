@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WebNotesApi.Models.NoteModels;
 
 namespace WebNotesApi.Models.AutorizationModels
 {
@@ -56,5 +58,8 @@ namespace WebNotesApi.Models.AutorizationModels
         /// Дата истечения токена для востановления пароля.
         /// </summary>
         public string? DateExpirationPasswordVerificationToken { get; set; }
+
+        [JsonIgnore]
+        public List<Note> Notes { get; set; }
     }
 }

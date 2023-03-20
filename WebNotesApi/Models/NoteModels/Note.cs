@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
+using WebNotesApi.Models.AutorizationModels;
 
 namespace WebNotesApi.Models.NoteModels
 {
@@ -45,9 +46,7 @@ namespace WebNotesApi.Models.NoteModels
         [JsonIgnore]
         public NoteCategory Category { get; set; }
 
-        /// <summary>
-        /// id пользователя
-        /// </summary>
-        public int UserId { get; set; }
+        [JsonIgnore]
+        public List<User> Users { get; set; } = new List<User>();
     }
 }
