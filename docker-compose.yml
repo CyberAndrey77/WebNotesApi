@@ -1,17 +1,17 @@
 version: '3.8'
 
-networks:
-  mynet:
-    external:
-      name: mynet
+# networks:
+#   mynet:
+#     external:
+#       name: mynet
 
 services:
   webapinotes:
     container_name: webapinotes
     depends_on:
       - "postgers"
-    networks:
-      - mynet
+    # networks:
+    #   - mynet
     build: 
       context: .
       dockerfile: Dockerfile
@@ -21,6 +21,7 @@ services:
     expose:
       - "80"
     environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
       DB_CONNECTION_STRING: "Host=postgers;Port=5432;Database=Notes;Username=postgres;Password=159753"
 
 

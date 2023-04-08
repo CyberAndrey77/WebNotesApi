@@ -51,6 +51,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
+builder.Services.AddCors(p => p.AddPolicy("corsapp", builder =>
+{
+    builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
 string connection = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? "Host=localhost;Port=5432;Database=Notes;Username=postgres;Password=159753";
 //string connection = "Host=localhost;Port=5432;Database=Notes;Username=postgres;Password=159753";
 builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connection));
@@ -67,10 +71,10 @@ builder.Services.AddScoped<IRefreshTokenValidator, RefreshTokenValidator>();
 
 var app = builder.Build();
 
-app.UseCors(
-    options => options.AllowAnyOrigin()
-       .AllowAnyMethod()
-       .AllowAnyHeader());
+//app.UseCors(
+//    options => options.AllowAnyOrigin()
+//       .AllowAnyMethod()
+//       .AllowAnyHeader());
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -78,7 +82,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("corsapp");
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
