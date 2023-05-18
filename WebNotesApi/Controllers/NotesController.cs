@@ -37,9 +37,9 @@ namespace WebNotesApi.Controllers
 
 
 
-            var notes = await _context.Notes.Include(note => note.Users.Where(user => user.Id == userId))
-                .AsNoTracking().ToListAsync();
-            //var notes = await _context.Notes.Where(x => x.UserId == userId).ToListAsync();
+            //var notes = await _context.Notes.Include(note => note.Users.Where(user => user.Id == userId))
+            //    .AsNoTracking().ToListAsync();
+            var notes = await _context.Notes.Where(x => x.UserId == userId).ToListAsync();
             return notes;
         }
 
@@ -54,8 +54,8 @@ namespace WebNotesApi.Controllers
 
             int userId = await FindUser();
 
-            var note = await _context.Notes.Include(u => u.Users).AsNoTracking().FirstOrDefaultAsync(n => n.Id == id);
-            //var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
+            //var note = await _context.Notes.Include(u => u.Users).AsNoTracking().FirstOrDefaultAsync(n => n.Id == id);
+            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
             if (note == null)
             {
                 return NotFound();
@@ -115,7 +115,7 @@ namespace WebNotesApi.Controllers
 
             int userId = await FindUser();
 
-            var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == userId);
+            //var user = await _context.Users.FirstOrDefaultAsync(user => user.Id == userId);
             
 
             var note = new Note
@@ -123,11 +123,11 @@ namespace WebNotesApi.Controllers
                 NoteName = model.NoteName,
                 Text = model.Text,
                 CategoryId = model.CategoryId,
+                UserId = userId,
                 CreatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
                 UpdatedDate = DateTime.Now.ToString("dd.MM.yyyy"),
             };
-            note.Users.Add(user);
-            user.Notes.Add(note);
+            //user.Notes.Add(note);
             _context.Notes.Add(note);
 
             await _context.SaveChangesAsync();
@@ -152,13 +152,13 @@ namespace WebNotesApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteNote(int id)
         {
-            if (_context.Notes == null)
-            {
-                return NotFound();
-            }
-            int userId = await FindUser();
+            //if (_context.Notes == null)
+            //{
+            //    return NotFound();
+            //}
+            //int userId = await FindUser();
 
-            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == userId);
+            var note = await _context.Notes.FirstOrDefaultAsync(x => x.Id == id);
             if (note == null)
             {
                 return NotFound();

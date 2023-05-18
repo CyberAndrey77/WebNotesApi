@@ -46,7 +46,6 @@ namespace WebNotesApi.Models.NoteModels
         [JsonIgnore]
         public NoteCategory Category { get; set; }
 
-        [JsonIgnore]
-        public List<User> Users { get; set; } = new List<User>();
+        public int UserId { get; set; }
     }
 }
